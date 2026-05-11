@@ -1,0 +1,10 @@
+ipykernel==7.2.0
+matplotlib==3.10.9
+
+# -- inferencers --
+google-genai==2.0.1
+
+# -- parsers --
+pypdf==6.11.0
+# for reading some PDFs
+cryptography==48.0.0
