@@ -38,5 +38,5 @@ class OnlinePipeline:
 
         prompt = self.generation_prompt.format(context=context, query=query)
 
-        text_response = self.inferencer.infer(prompt)
-        return text_response, results.points
+        text_response, used_tokens = self.inferencer.infer(prompt)
+        return text_response, results.points, used_tokens
