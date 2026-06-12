@@ -9,22 +9,24 @@ load_dotenv("../.env")
 from tqdm import tqdm
 from evaluation.RAGEvaluator import RAGEvaluator
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 class Config:
     # Ruta del archivo generado por do_rag_test_set.py
     # NOTA: Cambia esto por el nombre del archivo real que quieras evaluar
-    RESULTS_PATH = os.path.abspath("../output/generation_results/20260517_125910.json")
+    RESULTS_PATH = os.path.abspath(f"{script_dir}/../output/generation_results/baseline_20260611_220459.json")
     
-    LOAD_FROM_CHECKPOINT = False
+    LOAD_FROM_CHECKPOINT = True
     if LOAD_FROM_CHECKPOINT:
         # introduce manualmente el checkpoint a cargar
-        CHECKPOINT_PATH = os.path.abspath(f"../output/checkpoints/eval_XXX.json")
+        CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/eval_20260612_153807.json")
     else:
         # crea un nuevo checkpoint para esta ejecución
-        CHECKPOINT_PATH = os.path.abspath(f"../output/checkpoints/eval_{TIMESTAMP}.json")      
+        CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/eval_{TIMESTAMP}.json")      
 
-    SLEEP_TIME = 2 # para evitar rate limits del LLM Judge
+    SLEEP_TIME = 3 # para evitar rate limits del LLM Judge
 
 
 def main():
@@ -97,13 +99,14 @@ def main():
         with open(Config.CHECKPOINT_PATH, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=4)
 
-        break # to test
+        #break # to test
         sleep(Config.SLEEP_TIME)
 
     print(f"\nEvaluación completada con {errors_count} errores.")
 
-    os.makedirs("../output/evaluation_results", exist_ok=True)
-    final_results_path = os.path.abspath(f"../output/evaluation_results/eval_{TIMESTAMP}.json")
+    output_dir = os.path.abspath(f"{script_dir}/../output/evaluation_results")
+    os.makedirs(output_dir, exist_ok=True)
+    final_results_path = os.path.abspath(f"{output_dir}/eval_{TIMESTAMP}.json")
     with open(final_results_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
         

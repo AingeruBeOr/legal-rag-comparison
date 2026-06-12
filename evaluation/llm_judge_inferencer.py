@@ -23,11 +23,17 @@ class LLMJudgeInferencer:
         response_content = response_content.strip()
 
         # remove markdown code block if it exists
-        if response_content.startswith("```") and response_content.endswith("```"):
-            response_content = response_content[3:-3].strip()
+        # sometimes it also starts with ```json, so we check for that as well
+        if response_content.startswith("```json") and response_content.endswith("```"):
+            response_content = response_content[len("```json"): -len("```")].strip()
+        elif response_content.startswith("```") and response_content.endswith("```"):
+            response_content = response_content[len("```"): -len("```")].strip()
 
         # try to parse the remaining content as JSON
-        parsed_content = json.loads(response_content)
+        try:
+            parsed_content = json.loads(response_content)
+        except json.JSONDecodeError:
+            raise ValueError(f"Unable to parse LLM Judge response as JSON. Response content: {response_content}")
         return parsed_content
 
     def judge(self, prompt) -> dict:
@@ -35,7 +41,6 @@ class LLMJudgeInferencer:
             model="qwen/qwen3-32b",
             messages=[{"role": "user", "content": prompt}]
         )
-
 
         content = response.choices[0].message.content
         content = self.parse_response(content)
