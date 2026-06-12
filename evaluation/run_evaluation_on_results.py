@@ -18,7 +18,7 @@ class Config:
     # NOTA: Cambia esto por el nombre del archivo real que quieras evaluar
     RESULTS_PATH = os.path.abspath(f"{script_dir}/../output/generation_results/baseline_20260611_220459.json")
     
-    LOAD_FROM_CHECKPOINT = True
+    LOAD_FROM_CHECKPOINT = False
     if LOAD_FROM_CHECKPOINT:
         # introduce manualmente el checkpoint a cargar
         CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/eval_20260612_153807.json")
