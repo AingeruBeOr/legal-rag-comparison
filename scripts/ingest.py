@@ -11,8 +11,8 @@ sys.path.append("../src/")
 class Config:
     DOCUMENTS_PATH = os.path.abspath("../data/raw/")
     
-    EMBEDDING_MODEL = "BAAI/bge-m3"
-    VECTOR_SIZE = 1024
+    EMBEDDING_MODEL = "BSC-LT/MrBERT-legal"
+    VECTOR_SIZE = 768
 
     COLLECTION_NAME = "documents"
     
@@ -20,13 +20,16 @@ class Config:
     BATCH_SIZE = 1 # con 4 ya me coge 12-13GB de RAM
     CHUNK_BATCH_SIZE = 32
 
-from parser import PDFParser
+from parser import PDFParser as PDFParser
 from chunking import PDFChunker
-from embedding import HuggingFaceEmbeddingsLC
+if "MrBERT-legal" in Config.EMBEDDING_MODEL:
+    from embedding_mean_pooling import MeanPoolingEmbeddings as HuggingFaceEmbeddingsLC
+else:
+    from embedding import HuggingFaceEmbeddingsLC
 
 parser = PDFParser()
 chunker = PDFChunker()
-embedder = HuggingFaceEmbeddingsLC(show_progress=False)
+embedder = HuggingFaceEmbeddingsLC(show_progress=False, model_name=Config.EMBEDDING_MODEL)
 
 
 # -- PROCESS --
