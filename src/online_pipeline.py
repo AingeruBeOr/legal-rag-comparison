@@ -1,13 +1,18 @@
-from src.embedding import HuggingFaceEmbeddingsLC
 from qdrant_client import QdrantClient as QdrantClientOfficial, models
 from src.vector_store_qdrant import QdrantClient
 from src.inferencer import GeminiInferencer
+from src.inferencer_bedrock import SonnetInferencer
+from src.inferencer_openrouter import OpenRouterInferencer
 from prompts.generation import prompt as generation_prompt
 
 class OnlinePipeline:
     def __init__(self, embedding_model_name, top_k, collection_name, llm_model_name):
         if llm_model_name == "gemini-3.1-flash-lite":
             self.inferencer = GeminiInferencer(llm_model_name)
+        elif "sonnet" in llm_model_name:
+            self.inferencer = SonnetInferencer()
+        elif "gpt" in llm_model_name:
+            self.inferencer = OpenRouterInferencer(model_id=llm_model_name)
         else:
             raise ValueError(f"Unsupported inferencer: {llm_model_name}")
 
@@ -19,7 +24,12 @@ class OnlinePipeline:
         if collection_embedding_model != embedding_model_name:
             raise ValueError(f"Embedding model mismatch: collection was created with {collection_embedding_model} but {embedding_model_name} was provided for RAG.")
         else:
-            self.embedder = HuggingFaceEmbeddingsLC(model_name=embedding_model_name, show_progress=False)
+            if "MrBERT-legal" in embedding_model_name:
+                from src.embedding_mean_pooling import MeanPoolingEmbeddings
+                self.embedder = MeanPoolingEmbeddings(model_name=embedding_model_name, show_progress=False)
+            else:
+                from src.embedding import HuggingFaceEmbeddingsLC
+                self.embedder = HuggingFaceEmbeddingsLC(model_name=embedding_model_name, show_progress=False)
 
         self.generation_prompt = generation_prompt
         self.top_k = top_k
