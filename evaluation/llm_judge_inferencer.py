@@ -10,7 +10,7 @@ from groq import Groq
 class LLMJudgeInferencer:
     def __init__(self):
         self.client = Groq(
-            api_key=os.environ.get("GROQ_API_KEY"),
+            api_key="",
         )
 
     def parse_response(self, response_content):

@@ -6,7 +6,7 @@ from google import genai
 
 class GeminiInferencer:
     def __init__(self, model_id="gemini-3.1-flash-lite"):
-        self.client = genai.Client()
+        self.client = genai.Client(api_key="")
         self.model_id = model_id
 
     def infer(self, prompt) -> str | dict:

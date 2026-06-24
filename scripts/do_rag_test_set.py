@@ -28,13 +28,15 @@ class Config:
         CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/rag_{TIMESTAMP}.json")      
 
     EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
+    RERANKER_MODEL_NAME = "BAAI/bge-reranker-v2-m3"
     TOP_K = 3
-    COLLECTION_NAME = "documents"
+    CANDIDATE_K = 15 
+    COLLECTION_NAME = "baseline"
     LLM_MODEL_NAME = "gemini-3.1-flash-lite"
     SLEEP_TIME = 3 # to avoid hitting rate limits
 
 test_set_path = os.path.abspath(Config.TEST_SET_PATH)
-with open(test_set_path, "r") as f:
+with open(test_set_path, encoding="utf-8") as f:
     test_set = json.load(f)
 
 # print all the config values
@@ -46,15 +48,19 @@ input("Press Enter to run the RAG test...")
 
 rag_pipeline = OnlinePipeline(
     embedding_model_name=Config.EMBEDDING_MODEL_NAME,
-    top_k=Config.TOP_K, 
+    top_k=Config.TOP_K,
     collection_name=Config.COLLECTION_NAME,
     llm_model_name=Config.LLM_MODEL_NAME,
+    reranker_model_name=Config.RERANKER_MODEL_NAME,
+    candidate_k=Config.CANDIDATE_K,
 )
 
 results = {
     "config": {
         "embedding_model_name": Config.EMBEDDING_MODEL_NAME,
+        "reranker_model_name": Config.RERANKER_MODEL_NAME,
         "top_k": Config.TOP_K,
+        "candidate_k": Config.CANDIDATE_K,
         "collection_name": Config.COLLECTION_NAME,
         "llm_model_name": Config.LLM_MODEL_NAME,
     },
@@ -64,7 +70,7 @@ results = {
 # Cargar checkpoint si existe y está habilitado
 if Config.LOAD_FROM_CHECKPOINT and os.path.exists(Config.CHECKPOINT_PATH):
     print(f"Cargando checkpoint desde {Config.CHECKPOINT_PATH}...")
-    with open(Config.CHECKPOINT_PATH, "r") as f:
+    with open(Config.CHECKPOINT_PATH, "r", encoding="utf-8") as f:
         checkpoint_data = json.load(f)
         # Actualizamos resultados con el checkpoint
         results = checkpoint_data
@@ -114,7 +120,7 @@ for i, qa in enumerate(tqdm(test_set, desc="Procesando preguntas")):
         results["qa_pairs"].append(qa_result)
 
     # Guardar checkpoint después de cada petición 
-    with open(Config.CHECKPOINT_PATH, "w") as f:
+    with open(Config.CHECKPOINT_PATH, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=4, ensure_ascii=False)
 
     #break # to test
@@ -125,7 +131,7 @@ print(f"\nRAG test completado con {errors_count} errores.")
 output_dir = os.path.abspath(f"{script_dir}/../output/generation_results")
 os.makedirs(output_dir, exist_ok=True)
 results_path = os.path.abspath(f"{output_dir}/{TIMESTAMP}.json")
-with open(results_path, "w") as f:
+with open(results_path, "w", encoding="utf-8") as f:
     json.dump(results, f, indent=4, ensure_ascii=False)
 
 print(f"Resultados guardados en {results_path}")

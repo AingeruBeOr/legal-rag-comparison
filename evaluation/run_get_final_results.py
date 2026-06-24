@@ -3,8 +3,8 @@ import math
 import os
 
 # Ruta al archivo JSON de evaluación
-JSON_PATH = os.path.abspath("../output/evaluation_results/eval_20260611_220459.json")
-JSON_PATH = os.path.abspath("../output/checkpoints/eval_20260612_153807.json")
+JSON_PATH = os.path.abspath("../legal-rag-comparison_loir/output/evaluation_results/eval_20260623_122237.json")
+JSON_PATH = os.path.abspath("../legal-rag-comparison_loir/output/checkpoints/eval_20260623_122237.json")
 
 
 def calcular_media_y_desviacion(valores):
