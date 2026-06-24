@@ -9,29 +9,24 @@ sys.path.append("../src/")
 
 # -- CONFIG --
 class Config:
-    DOCUMENTS_PATH = os.path.abspath("../legal-rag-comparison_loir/data")
+    DOCUMENTS_PATH = os.path.abspath("../data/raw/")
     
     EMBEDDING_MODEL = "BAAI/bge-m3"
     VECTOR_SIZE = 1024
 
-    COLLECTION_NAME = "reranking"
+    COLLECTION_NAME = "documents"
     
     # usamos batch size para optimizar la generación de embeddings
     BATCH_SIZE = 1 # con 4 ya me coge 12-13GB de RAM
     CHUNK_BATCH_SIZE = 32
 
-os.chdir(r"c:\Users\Usuario\Desktop\RyP_4Pv3_Actividad_Laboratorio_Código_para_estudiantes\legal-rag-comparison_loir\src")
-print(os.getcwd())
-from parser import PDFParser as PDFParser
+from parser import PDFParser
 from chunking import PDFChunker
-if "MrBERT-legal" in Config.EMBEDDING_MODEL:
-    from embedding_mean_pooling import MeanPoolingEmbeddings as HuggingFaceEmbeddingsLC
-else:
-    from embedding import HuggingFaceEmbeddingsLC
+from embedding import HuggingFaceEmbeddingsLC
 
 parser = PDFParser()
 chunker = PDFChunker()
-embedder = HuggingFaceEmbeddingsLC(show_progress=False, model_name=Config.EMBEDDING_MODEL)
+embedder = HuggingFaceEmbeddingsLC(show_progress=False)
 
 
 # -- PROCESS --

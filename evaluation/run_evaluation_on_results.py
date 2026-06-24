@@ -16,12 +16,12 @@ TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 class Config:
     # Ruta del archivo generado por do_rag_test_set.py
     # NOTA: Cambia esto por el nombre del archivo real que quieras evaluar
-    RESULTS_PATH = os.path.abspath(f"{script_dir}/../output/generation_results/baseline_20260611_220459.json")
+    RESULTS_PATH = os.path.abspath(f"{script_dir}/../output/generation_results/semantic_20260617_180158.json")
     
     LOAD_FROM_CHECKPOINT = False
     if LOAD_FROM_CHECKPOINT:
         # introduce manualmente el checkpoint a cargar
-        CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/eval_20260612_153807.json")
+        CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/semantic_rag_20260617_180158.json")
     else:
         # crea un nuevo checkpoint para esta ejecución
         CHECKPOINT_PATH = os.path.abspath(f"{script_dir}/../output/checkpoints/eval_{TIMESTAMP}.json")      
@@ -36,7 +36,7 @@ def main():
 
     evaluator = RAGEvaluator()
 
-    with open(Config.RESULTS_PATH, "r") as f:
+    with open(Config.RESULTS_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     # Imprimir configuración
